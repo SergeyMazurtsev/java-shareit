@@ -55,7 +55,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto patchItem(ItemDto itemDto, Long itemId, Long userId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Not found."));
-        if (item.getOwner().getId() != userId) {
+        if (item.getOwner().getId().equals(userId)) {
             throw new NotFoundException("Not found.");
         }
         ItemMapper.patchItem(itemDto, item);
@@ -140,10 +140,10 @@ public class ItemServiceImpl implements ItemService {
                     .sorted(Comparator.comparing(Booking::getStart))
                     .filter(b -> b.getEnd().isAfter(LocalDateTime.now()))
                     .findFirst().orElse(null);
-            if (last != null && last.getItem().getOwner().getId() != userId) {
+            if (last != null && !last.getItem().getOwner().getId().equals(userId)) {
                 last = null;
             }
-            if (next != null && next.getItem().getOwner().getId() != userId) {
+            if (next != null && !next.getItem().getOwner().getId().equals(userId)) {
                 next = null;
             }
         }

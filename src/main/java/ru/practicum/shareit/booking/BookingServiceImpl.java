@@ -41,7 +41,7 @@ public class BookingServiceImpl implements BookingService {
                 || booking.getEnd().isBefore(LocalDateTime.now())) {
             throw new ValidatorException("Bad request.");
         }
-        if (userId == booking.getItem().getOwner().getId()) {
+        if (booking.getItem().getOwner().getId().equals(userId)) {
             throw new NotFoundException("Bad request.");
         }
         try {
@@ -55,7 +55,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDtoOut patchBooking(Long userId, Long bookingId, Boolean approved) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Not found."));
         Long owner = booking.getItem().getOwner().getId();
-        if (owner != commonGetItemAndUser.getInDBUser(userId).getId()) {
+        if (!commonGetItemAndUser.getInDBUser(userId).getId().equals(owner)) {
             throw new NotFoundException("Not found.");
         }
         if (!booking.getItem().getAvailable()) {
@@ -76,8 +76,8 @@ public class BookingServiceImpl implements BookingService {
     public BookingDtoOut getBooking(Long userId, Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Not found."));
         Long owner = booking.getItem().getOwner().getId();
-        if (owner != commonGetItemAndUser.getInDBUser(userId).getId()) {
-            if (userId != booking.getBooker().getId()) {
+        if (!commonGetItemAndUser.getInDBUser(userId).getId().equals(owner)) {
+            if (!booking.getBooker().getId().equals(userId)) {
                 throw new NotFoundException("Not found.");
             }
         }
