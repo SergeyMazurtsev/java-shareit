@@ -1,7 +1,25 @@
 package ru.practicum.shareit.item.dto;
 
-/**
- * TODO Sprint add-controllers.
- */
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
+import lombok.Data;
+import ru.practicum.shareit.booking.dto.BookingShortDto;
+import ru.practicum.shareit.request.dto.ItemRequestDto;
+
+import java.util.Set;
+
+
+@Data
+@Builder
 public class ItemDto {
+    private Long id;
+    private String name;
+    private String description;
+//    @JsonIgnore
+//    private Long owner;
+    private Boolean available;
+    private ItemRequestDto request;
+    private Set<CommentDto> comments;
+    private BookingShortDto lastBooking;
+    private BookingShortDto nextBooking;
 }
