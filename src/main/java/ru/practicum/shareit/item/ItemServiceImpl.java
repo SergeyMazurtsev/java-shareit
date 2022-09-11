@@ -55,7 +55,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto patchItem(ItemDto itemDto, Long itemId, Long userId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Not found."));
-        if (item.getOwner().getId().equals(userId)) {
+        Long checkId = item.getOwner().getId();
+        if (checkId != userId) {
             throw new NotFoundException("Not found.");
         }
         ItemMapper.patchItem(itemDto, item);
@@ -106,9 +107,9 @@ public class ItemServiceImpl implements ItemService {
         Item item = commonGetItemAndUser.getInDbItem(itemId);
         User user = commonGetItemAndUser.getInDBUser(userId);
         final var checkApproved = item.getBookings().stream()
-                .anyMatch(b -> b.getStatus().equals(BookingStatus.APPROVED)
-                        || b.getStatus().equals(BookingStatus.WAITING));
-        final var checkFuture = item.getBookings().stream().filter(b -> b.getBooker().getId().equals(userId))
+                .anyMatch(b -> (b.getStatus() == BookingStatus.APPROVED)
+                        || (b.getStatus() == BookingStatus.WAITING));
+        final var checkFuture = item.getBookings().stream().filter(b -> (b.getBooker().getId() == userId))
                 .anyMatch(b -> b.getStart().isBefore(LocalDateTime.now()));
         if (!checkApproved || !checkFuture) {
             throw new ValidatorException("Bad request2.");
@@ -140,11 +141,17 @@ public class ItemServiceImpl implements ItemService {
                     .sorted(Comparator.comparing(Booking::getStart))
                     .filter(b -> b.getEnd().isAfter(LocalDateTime.now()))
                     .findFirst().orElse(null);
-            if (last != null && !last.getItem().getOwner().getId().equals(userId)) {
-                last = null;
+            if (last != null) {
+                Long checkLast = last.getItem().getOwner().getId();
+                if (checkLast != userId) {
+                    last = null;
+                }
             }
-            if (next != null && !next.getItem().getOwner().getId().equals(userId)) {
-                next = null;
+            if (next != null) {
+                Long checkNext = next.getItem().getOwner().getId();
+                if (checkNext != userId) {
+                    next = null;
+                }
             }
         }
         itemDtoOut.setLastBooking((last != null) ? BookingMapper.bookingShortDto(last) : null);
