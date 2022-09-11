@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
@@ -15,8 +14,6 @@ public class ItemDto {
     private Long id;
     private String name;
     private String description;
-//    @JsonIgnore
-//    private Long owner;
     private Boolean available;
     private ItemRequestDto request;
     private Set<CommentDto> comments;

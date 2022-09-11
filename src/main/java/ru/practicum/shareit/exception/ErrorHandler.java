@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,12 +30,12 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> BadRequestHandler(final ServletRequestBindingException e) {
+    public ResponseEntity<?> badRequestHandler(final ServletRequestBindingException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> UnknownStatusHandler(final MethodArgumentTypeMismatchException e,
+    public ResponseEntity<?> unknownStatusHandler(final MethodArgumentTypeMismatchException e,
                                                   WebRequest request) {
         String message = "Unknown state: " + request.getParameter(e.getName());
         Map<String, String> answer = new HashMap<>();

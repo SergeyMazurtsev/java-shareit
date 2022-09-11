@@ -106,10 +106,10 @@ public class ItemServiceImpl implements ItemService {
         Item item = commonGetItemAndUser.getInDbItem(itemId);
         User user = commonGetItemAndUser.getInDBUser(userId);
         final var checkApproved = item.getBookings().stream()
-                .anyMatch(b-> b.getStatus().equals(BookingStatus.APPROVED)
+                .anyMatch(b -> b.getStatus().equals(BookingStatus.APPROVED)
                         || b.getStatus().equals(BookingStatus.WAITING));
-        final var checkFuture = item.getBookings().stream().filter(b->b.getBooker().getId().equals(userId))
-                .anyMatch(b->b.getStart().isBefore(LocalDateTime.now()));
+        final var checkFuture = item.getBookings().stream().filter(b -> b.getBooker().getId().equals(userId))
+                .anyMatch(b -> b.getStart().isBefore(LocalDateTime.now()));
         if (!checkApproved || !checkFuture) {
             throw new ValidatorException("Bad request2.");
         }
