@@ -6,16 +6,18 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;
 
+import java.util.stream.Collectors;
+
 @Component
-@RequiredArgsConstructor
 public class ItemMapper {
-    public static Item toItem(ItemDto itemDto, ItemRequest itemRequest) {
+    public static Item toItem(ItemDto itemDto) {
         return Item.builder()
                 .id(itemDto.getId())
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
-                .request(itemRequest)
+                .request((itemDto.getRequestId() != null) ?
+                        ItemRequest.builder().id(itemDto.getRequestId()).build() : null)
                 .build();
     }
 
@@ -25,6 +27,9 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
+                .requestId((item.getRequest() != null) ? item.getRequest().getId() : null)
+                .comments((item.getComments() != null) ? item.getComments().stream().map(CommentMapper::toCommentDto)
+                        .collect(Collectors.toSet()) : null)
                 .build();
     }
 

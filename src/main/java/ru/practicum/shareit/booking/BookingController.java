@@ -32,13 +32,17 @@ public class BookingController {
 
     @GetMapping()
     public ResponseEntity<?> getBookingOwnerByStatus(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                @RequestParam(defaultValue = "ALL") BookingState state) {
-        return ResponseEntity.ok(bookingService.getBookingOwnerByStatus(userId, state));
+                                                     @RequestParam(defaultValue = "ALL") BookingState state,
+                                                     @RequestParam(defaultValue = "0") Integer from,
+                                                     @RequestParam(defaultValue = "10") Integer size) {
+        return ResponseEntity.ok(bookingService.getBookingOwnerByStatus(userId, state, from, size));
     }
 
     @GetMapping("/owner")
     public ResponseEntity<?> getBookingItemsByStatus(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                     @RequestParam(defaultValue = "ALL") BookingState state) {
-        return ResponseEntity.ok(bookingService.getBookingItemsByStatus(userId, state));
+                                                     @RequestParam(defaultValue = "ALL") BookingState state,
+                                                     @RequestParam(defaultValue = "0") Integer from,
+                                                     @RequestParam(defaultValue = "10") Integer size) {
+        return ResponseEntity.ok(bookingService.getBookingItemsByStatus(userId, state, from, size));
     }
 }

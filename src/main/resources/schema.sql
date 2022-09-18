@@ -17,6 +17,7 @@ create table if not exists requests
     id           bigint generated always as identity primary key,
     description  varchar(255) not null,
     requestor_id bigint,
+    created      timestamp without time zone not null,
     constraint fk_request_to_user foreign key (requestor_id) references users (id) on delete cascade
 );
 

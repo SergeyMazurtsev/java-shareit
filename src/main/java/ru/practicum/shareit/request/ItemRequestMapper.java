@@ -1,24 +1,30 @@
 package ru.practicum.shareit.request;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.ItemRequestDtoIn;
+import ru.practicum.shareit.request.dto.ItemRequestDtoOut;
 
 @Component
-@RequiredArgsConstructor
 public class ItemRequestMapper {
-    public ItemRequestDto toRequestDto(ItemRequest itemRequest) {
-        return ItemRequestDto.builder()
+    public static ItemRequestDtoOut toRequestDtoOut(ItemRequest itemRequest) {
+        return ItemRequestDtoOut.builder()
                 .id(itemRequest.getId())
                 .description(itemRequest.getDescription())
-                .requestorId(itemRequest.getRequestorId().getId())
+                .created(itemRequest.getCreated())
                 .build();
     }
 
-    public ItemRequest toRequest(ItemRequestDto itemRequestDto) {
+    public static ItemRequest toRequest(ItemRequestDtoIn itemRequestDto) {
         return ItemRequest.builder()
                 .id(itemRequestDto.getId())
                 .description(itemRequestDto.getDescription())
                 .build();
     }
+
+//    public static ItemRequestDtoIn toRequestDtoIn(ItemRequest itemRequest) {
+//        return ItemRequestDtoIn.builder()
+//                .id(itemRequest.getId())
+//                .description(itemRequest.getDescription())
+//                .build();
+//    }
 }

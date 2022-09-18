@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.CommonGetItemAndUser;
+import ru.practicum.shareit.CommonService;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingStatus;
@@ -15,7 +15,6 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.ItemRequestMapper;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
@@ -31,14 +30,12 @@ import java.util.stream.Stream;
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final CommentRepository commentRepository;
-    private final CommonGetItemAndUser commonGetItemAndUser;
-    private final ItemRequestMapper itemRequestMapper;
+    private final CommonService commonService;
 
     @Override
     public ItemDto createItem(ItemDto itemDto, Long userId) {
-        Item item = ItemMapper.toItem(itemDto,
-                (itemDto.getRequest() != null) ? itemRequestMapper.toRequest(itemDto.getRequest()) : null);
-        item.setOwner(commonGetItemAndUser.getInDBUser(userId));
+        Item item = ItemMapper.toItem(itemDto);
+        item.setOwner(commonService.getInDBUser(userId));
         if (Stream.of(item.getName(), item.getDescription(), item.getAvailable()).anyMatch(Objects::isNull)) {
             throw new ValidatorException("Bad request.");
         }
@@ -78,25 +75,26 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItem(Long itemId, Long userId) {
-        Item item = commonGetItemAndUser.getInDbItem(itemId);
+        Item item = commonService.getInDbItem(itemId);
         return convertItem(item, userId);
     }
 
     @Override
-    public List<ItemDto> getItemsOfUser(Long userId) {
-        User user = commonGetItemAndUser.getInDBUser(userId);
-        List<Item> items = itemRepository.findAllByOwner(user);
-        return items.stream().map(i -> convertItem(i, userId)).collect(Collectors.toList());
+    public List<ItemDto> getItemsOfUser(Long userId, Integer from, Integer size) {
+        User user = commonService.getInDBUser(userId);
+        return itemRepository.findAllByOwner(user, commonService.getPagination(from, size, null))
+                .stream().map(i -> convertItem(i, userId)).collect(Collectors.toList());
     }
 
     @Override
-    public List<ItemDto> searchItems(String text, Long userId) {
+    public List<ItemDto> searchItems(String text, Long userId, Integer from, Integer size) {
         if (text.isEmpty()) {
             return Collections.emptyList();
         }
-        List<Item> itemList = itemRepository
-                .findAllByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableTrue(text.toLowerCase(), text.toLowerCase());
-        return itemList.stream().map(i -> convertItem(i, userId)).collect(Collectors.toList());
+        return itemRepository
+                .findAllByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableTrue(
+                        text.toLowerCase(), text.toLowerCase(), commonService.getPagination(from, size, null))
+                .stream().map(i -> convertItem(i, userId)).collect(Collectors.toList());
     }
 
     @Override
@@ -104,8 +102,8 @@ public class ItemServiceImpl implements ItemService {
         if (commentDto.getText().isEmpty() || commentDto.getText() == null) {
             throw new ValidatorException("Bad request1.");
         }
-        Item item = commonGetItemAndUser.getInDbItem(itemId);
-        User user = commonGetItemAndUser.getInDBUser(userId);
+        Item item = commonService.getInDbItem(itemId);
+        User user = commonService.getInDBUser(userId);
         final var checkApproved = item.getBookings().stream()
                 .anyMatch(b -> (b.getStatus() == BookingStatus.APPROVED)
                         || (b.getStatus() == BookingStatus.WAITING));
@@ -126,9 +124,6 @@ public class ItemServiceImpl implements ItemService {
 
     private ItemDto convertItem(Item inItem, Long userId) {
         ItemDto itemDtoOut = ItemMapper.toItemDto(inItem);
-        itemDtoOut.setRequest((inItem.getRequest() != null) ? itemRequestMapper.toRequestDto(inItem.getRequest()) : null);
-        itemDtoOut.setComments((inItem.getComments() != null) ? inItem.getComments().stream().map(CommentMapper::toCommentDto)
-                .collect(Collectors.toSet()) : null);
 
         Booking last = null;
         Booking next = null;

@@ -13,8 +13,8 @@ public interface BookingService {
 
     BookingDtoOut getBooking(Long userId, Long bookingId);
 
-    List<BookingDtoOut> getBookingOwnerByStatus(Long userId, BookingState approved);
+    List<BookingDtoOut> getBookingOwnerByStatus(Long userId, BookingState approved, Integer from, Integer size);
 
-    List<BookingDtoOut> getBookingItemsByStatus(Long userId, BookingState approved);
+    List<BookingDtoOut> getBookingItemsByStatus(Long userId, BookingState approved, Integer from, Integer size);
 
 }

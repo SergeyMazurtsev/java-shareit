@@ -3,7 +3,7 @@ package ru.practicum.shareit.booking;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.CommonGetItemAndUser;
+import ru.practicum.shareit.CommonService;
 import ru.practicum.shareit.booking.dto.BookingDtoIn;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.exception.IdViolationException;
@@ -12,7 +12,6 @@ import ru.practicum.shareit.exception.ValidatorException;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -22,13 +21,13 @@ import java.util.stream.Stream;
 @Service
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
-    private final CommonGetItemAndUser commonGetItemAndUser;
+    private final CommonService commonService;
 
     @Override
     public BookingDtoOut createBooking(BookingDtoIn bookingDtoIn, Long userId) {
         Booking booking = BookingMapper.toBooking(bookingDtoIn);
-        booking.setBooker(commonGetItemAndUser.getInDBUser(userId));
-        booking.setItem(commonGetItemAndUser.getInDbItem(bookingDtoIn.getItem()));
+        booking.setBooker(commonService.getInDBUser(userId));
+        booking.setItem(commonService.getInDbItem(bookingDtoIn.getItem()));
         booking.setStatus(BookingStatus.WAITING);
         if (Stream.of(booking.getBooker(), booking.getStart(), booking.getEnd())
                 .anyMatch(Objects::isNull)) {
@@ -56,7 +55,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDtoOut patchBooking(Long userId, Long bookingId, Boolean approved) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Not found."));
         Long owner = booking.getItem().getOwner().getId();
-        Long checkUserId = commonGetItemAndUser.getInDBUser(userId).getId();
+        Long checkUserId = commonService.getInDBUser(userId).getId();
         if (checkUserId != owner) {
             throw new NotFoundException("Not found.");
         }
@@ -78,7 +77,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDtoOut getBooking(Long userId, Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Not found."));
         Long owner = booking.getItem().getOwner().getId();
-        Long checkUserId = commonGetItemAndUser.getInDBUser(userId).getId();
+        Long checkUserId = commonService.getInDBUser(userId).getId();
         if (checkUserId != owner) {
             Long checkBookerId = booking.getBooker().getId();
             if (checkBookerId != userId) {
@@ -89,44 +88,50 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoOut> getBookingOwnerByStatus(Long userId, BookingState status) {
-        User user = commonGetItemAndUser.getInDBUser(userId);
-        List<Booking> searchBooking = new ArrayList<>();
+    public List<BookingDtoOut> getBookingOwnerByStatus(Long userId, BookingState status, Integer from, Integer size) {
+        User user = commonService.getInDBUser(userId);
         switch (status) {
             case ALL:
-                searchBooking = bookingRepository
-                        .findAllByBookerOrderByStartDesc(user);
-                break;
+                return  bookingRepository
+                        .findAllByBookerOrderByStartDesc(user, commonService.getPagination(from, size, null))
+                        .stream().map(BookingMapper::toBookingDtoOut).collect(Collectors.toList());
             case CURRENT:
-                searchBooking = bookingRepository
-                        .findAllByBookerAndStartBeforeAndEndAfterOrderByStartDesc(user, LocalDateTime.now(), LocalDateTime.now());
-                break;
+                return bookingRepository
+                        .findAllByBookerAndStartBeforeAndEndAfterOrderByStartDesc(
+                                user, LocalDateTime.now(), LocalDateTime.now(),
+                                commonService.getPagination(from, size, null))
+                        .stream().map(BookingMapper::toBookingDtoOut).collect(Collectors.toList());
             case FUTURE:
-                searchBooking = bookingRepository
-                        .findAllByBookerAndStartAfterOrderByStartDesc(user, LocalDateTime.now());
-                break;
+                return bookingRepository
+                        .findAllByBookerAndStartAfterOrderByStartDesc(
+                                user, LocalDateTime.now(), commonService.getPagination(from, size, null))
+                        .stream().map(BookingMapper::toBookingDtoOut).collect(Collectors.toList());
             case WAITING:
-                searchBooking = bookingRepository
-                        .findAllByBookerAndStatusLikeOrderByStartDesc(user, BookingStatus.WAITING);
-                break;
+                return bookingRepository
+                        .findAllByBookerAndStatusLikeOrderByStartDesc(
+                                user, BookingStatus.WAITING, commonService.getPagination(from, size, null))
+                        .stream().map(BookingMapper::toBookingDtoOut).collect(Collectors.toList());
             case REJECTED:
-                searchBooking = bookingRepository
-                        .findAllByBookerAndStatusLikeOrderByStartDesc(user, BookingStatus.REJECTED);
-                break;
+                return bookingRepository
+                        .findAllByBookerAndStatusLikeOrderByStartDesc(
+                                user, BookingStatus.REJECTED, commonService.getPagination(from, size, null))
+                        .stream().map(BookingMapper::toBookingDtoOut).collect(Collectors.toList());
             case PAST:
-                searchBooking = bookingRepository
-                        .findAllByBookerAndEndBeforeAndStatusNot(user, LocalDateTime.now(), BookingStatus.REJECTED);
-                break;
+                return bookingRepository
+                        .findAllByBookerAndEndBeforeAndStatusNot(
+                                user, LocalDateTime.now(), BookingStatus.REJECTED,
+                                commonService.getPagination(from, size, null))
+                        .stream().map(BookingMapper::toBookingDtoOut).collect(Collectors.toList());
             default:
                 throw new NotFoundException("Not found.");
         }
-        return searchBooking.stream().map(BookingMapper::toBookingDtoOut).collect(Collectors.toList());
     }
 
     @Override
-    public List<BookingDtoOut> getBookingItemsByStatus(Long userId, BookingState approved) {
-        User user = commonGetItemAndUser.getInDBUser(userId);
-        List<BookingDtoOut> searchBookings = bookingRepository.findAllBookingOfUserInItem(userId).stream()
+    public List<BookingDtoOut> getBookingItemsByStatus(Long userId, BookingState approved, Integer from, Integer size) {
+        User user = commonService.getInDBUser(userId);
+        List<BookingDtoOut> searchBookings = bookingRepository.findAllBookingOfUserInItem(
+                userId, commonService.getPagination(from, size, null)).stream()
                 .map(BookingMapper::toBookingDtoOut).collect(Collectors.toList());
         switch (approved) {
             case ALL:

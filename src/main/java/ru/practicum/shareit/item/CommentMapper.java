@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.model.Comment;
 import java.time.LocalDateTime;
 
 @Component
-@RequiredArgsConstructor
 public class CommentMapper {
     public static Comment toComment(CommentDto commentDto) {
         return Comment.builder()

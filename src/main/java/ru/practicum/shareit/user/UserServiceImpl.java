@@ -5,7 +5,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.CommonGetItemAndUser;
+import ru.practicum.shareit.CommonService;
 import ru.practicum.shareit.exception.IdViolationException;
 import ru.practicum.shareit.exception.ValidatorException;
 
@@ -19,12 +19,12 @@ import java.util.stream.Stream;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final EmailValidator validator = EmailValidator.getInstance();
-    private final CommonGetItemAndUser commonGetItemAndUser;
+    private final CommonService commonService;
 
 
     @Override
     public UserDto getUserById(Long userId) {
-        User user = commonGetItemAndUser.getInDBUser(userId);
+        User user = commonService.getInDBUser(userId);
         return UserMapper.toUserDto(user);
     }
 
@@ -34,10 +34,10 @@ public class UserServiceImpl implements UserService {
         if (!validator.isValid(user.getEmail())) {
             throw new ValidatorException("Bad email.");
         }
-        if (Stream.of(user.getName(),user.getEmail()).allMatch(Objects::isNull)) {
+        if (user.getName() == null || user.getEmail() == null) {
             throw new ValidatorException("Bad request.");
         }
-        if (Stream.of(user.getName(),user.getEmail()).allMatch(String::isEmpty)) {
+        if (user.getName().isEmpty() || user.getEmail().isEmpty()) {
             throw new ValidatorException("Bad request.");
         }
         try {
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto patchUser(UserDto userDto, Long userId) {
-        User user = commonGetItemAndUser.getInDBUser(userId);
+        User user = commonService.getInDBUser(userId);
         UserMapper.patchUser(userDto, user);
         try {
             return UserMapper.toUserDto(userRepository.save(user));
