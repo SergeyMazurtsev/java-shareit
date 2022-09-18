@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRequestRepository requestRepository;
     private final CommonService commonService;
+
     @Override
     public ItemRequestDtoOut createRequest(Long userId, LocalDateTime created, ItemRequestDtoIn requestDtoIn) {
         ItemRequest request = ItemRequestMapper.toRequest(requestDtoIn);

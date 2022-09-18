@@ -2,16 +2,9 @@ package ru.practicum.shareit.exception;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.comparator.BooleanComparator;
 import org.springframework.web.bind.ServletRequestBindingException;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.BookingController;
-import ru.practicum.shareit.booking.BookingState;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;

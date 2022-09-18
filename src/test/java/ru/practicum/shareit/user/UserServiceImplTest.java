@@ -1,46 +1,25 @@
 package ru.practicum.shareit.user;
 
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import ru.practicum.shareit.CommonService;
 import ru.practicum.shareit.exception.ValidatorException;
 
-import javax.persistence.*;
-import javax.transaction.Transactional;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isNotNull;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-//@Transactional
-//@RequiredArgsConstructor(onConstructor_ = @Autowired)
-//@TestPropertySource(properties = { "db.name=test"})
-//@SpringJUnitConfig({UserServiceImpl.class})
 public class UserServiceImplTest {
-//    @Autowired
-//    private final JdbcTemplate jdbcTemplate = new JdbcTemplate();
-//    private EntityManager em;
     private final UserRepository userRepository = Mockito.mock(UserRepository.class);
     private final CommonService commonService = Mockito.mock(CommonService.class);
 
@@ -104,14 +83,6 @@ public class UserServiceImplTest {
             assertThat(e.getMessage(), is("Bad request."));
         }
 
-//        when(userRepository.save(any(User.class)))
-//                .thenThrow(DataIntegrityViolationException.class);
-//        try {
-//            UserDto testUserDto1 = userService.createUser(userDto);
-//        } catch (DataIntegrityViolationException e) {
-//            assertThat(e.getMessage(), is("User already in base."));
-//        }
-
         verify(userRepository, Mockito.times(1))
                 .save(any(User.class));
     }
@@ -138,21 +109,6 @@ public class UserServiceImplTest {
         userService.deleteUser(1L);
         verify(userRepository, Mockito.times(1))
                 .deleteById(anyLong());
-//        jdbcTemplate.update("insert into users (id, name, email) values (?, ?, ?)",
-//                user.getId(), user.getName(), user.getEmail());
-//        em.createQuery("insert User (id, name, email) value (:id, :name, :email)")
-//                .setParameter("id", user.getId())
-//                        .setParameter("name", user.getName())
-//                                .setParameter("email", user.getEmail())
-//                                        .executeUpdate();
-//        em.persist(user);
-//        em.flush();
-//        em.createNativeQuery("insert into users (id, name, email) values ()")
-//        userService.deleteUser(user.getId());
-//        User testUser = em.createQuery("select u from User u where u.id = :id", User.class)
-//                .setParameter("id", user.getId()).getSingleResult();
-//        User testUser = em.find(User.class, user.getId());
-//        assertThat(testUser, nullValue());
     }
 
     @Test

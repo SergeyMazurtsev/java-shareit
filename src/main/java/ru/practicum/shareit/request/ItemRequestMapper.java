@@ -20,11 +20,4 @@ public class ItemRequestMapper {
                 .description(itemRequestDto.getDescription())
                 .build();
     }
-
-//    public static ItemRequestDtoIn toRequestDtoIn(ItemRequest itemRequest) {
-//        return ItemRequestDtoIn.builder()
-//                .id(itemRequest.getId())
-//                .description(itemRequest.getDescription())
-//                .build();
-//    }
 }

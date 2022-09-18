@@ -377,7 +377,7 @@ public class BookingServiceImplTest {
         bookings.get(0).setStart(start.minusMinutes(20));
         bookings.get(0).setEnd(end.minusMinutes(15));
         List<BookingDtoOut> testBookingDtoOut5 = bookingService.getBookingItemsByStatus(
-                user.getId(), BookingState.PAST,  0, 10);
+                user.getId(), BookingState.PAST, 0, 10);
         assertThat(testBookingDtoOut5, hasSize(bookingDtoOuts.size()));
 
         verify(commonService, times(6))

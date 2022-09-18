@@ -10,9 +10,7 @@ import ru.practicum.shareit.exception.IdViolationException;
 import ru.practicum.shareit.exception.ValidatorException;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor

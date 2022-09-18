@@ -1,11 +1,8 @@
 package ru.practicum.shareit.booking;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -187,13 +184,13 @@ public class BookingControllerTest {
                 .thenReturn(bookingDtoOuts);
 
         mvc.perform(get("/bookings")
-                .header("X-Sharer-User-Id", user.getId())
+                        .header("X-Sharer-User-Id", user.getId())
                         .param("state", "CURRENT")
                         .param("from", "0")
                         .param("size", "10")
-                .characterEncoding(StandardCharsets.UTF_8)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(bookingDtoOuts.size())))
                 .andExpect(jsonPath("$[0].id", is(bookingDtoOuts.get(0).getId()), Long.class))

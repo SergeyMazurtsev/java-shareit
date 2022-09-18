@@ -9,10 +9,6 @@ import java.util.Set;
 /**
  * TODO Sprint add-item-requests.
  */
-//@Data
-//@Getter
-//@Setter
-//@EqualsAndHashCode
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -160,7 +160,7 @@ public class ItemRequestServiceImplTest {
                 .getInDBUser(anyLong());
         verify(commonService, times(1))
                 .getItemsByRequest(anyLong());
-        verify(commonService,times(1))
+        verify(commonService, times(1))
                 .getPagination(anyInt(), anyInt(), any());
     }
 

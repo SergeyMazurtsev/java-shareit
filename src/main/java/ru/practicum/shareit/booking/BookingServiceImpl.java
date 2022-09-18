@@ -92,7 +92,7 @@ public class BookingServiceImpl implements BookingService {
         User user = commonService.getInDBUser(userId);
         switch (status) {
             case ALL:
-                return  bookingRepository
+                return bookingRepository
                         .findAllByBookerOrderByStartDesc(user, commonService.getPagination(from, size, null))
                         .stream().map(BookingMapper::toBookingDtoOut).collect(Collectors.toList());
             case CURRENT:
@@ -131,7 +131,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDtoOut> getBookingItemsByStatus(Long userId, BookingState approved, Integer from, Integer size) {
         User user = commonService.getInDBUser(userId);
         List<BookingDtoOut> searchBookings = bookingRepository.findAllBookingOfUserInItem(
-                userId, commonService.getPagination(from, size, null)).stream()
+                        userId, commonService.getPagination(from, size, null)).stream()
                 .map(BookingMapper::toBookingDtoOut).collect(Collectors.toList());
         switch (approved) {
             case ALL:

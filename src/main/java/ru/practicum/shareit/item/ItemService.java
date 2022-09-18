@@ -4,7 +4,6 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.util.List;
-import java.util.Set;
 
 public interface ItemService {
     ItemDto createItem(ItemDto itemDto, Long userId);

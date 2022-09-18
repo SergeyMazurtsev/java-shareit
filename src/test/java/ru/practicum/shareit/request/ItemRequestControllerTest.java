@@ -83,7 +83,7 @@ public class ItemRequestControllerTest {
         when(requestService.getRequests(anyLong()))
                 .thenReturn(requestDtoOuts);
         mvc.perform(get("/requests")
-                .header("X-Sharer-User-Id", 1L)
+                        .header("X-Sharer-User-Id", 1L)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

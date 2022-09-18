@@ -228,7 +228,7 @@ public class ItemServiceImplTest {
                 .thenReturn(items);
 
         List<ItemDto> itemDtos = List.of(itemDto);
-        List<ItemDto> testItemDto = itemService.searchItems("qwerty", user.getId(),0, 10);
+        List<ItemDto> testItemDto = itemService.searchItems("qwerty", user.getId(), 0, 10);
         assertThat(testItemDto, hasSize(itemDtos.size()));
         for (ItemDto i : itemDtos) {
             assertThat(testItemDto, hasItem(allOf(
@@ -246,7 +246,7 @@ public class ItemServiceImplTest {
         List<ItemDto> testItemDto1 = itemService.searchItems("", user.getId(), 0, 10);
         assertThat(testItemDto1, hasSize(0));
 
-        verify(commonService,times(1))
+        verify(commonService, times(1))
                 .getPagination(anyInt(), anyInt(), any());
         verify(itemRepository, times(1))
                 .findAllByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableTrue(
