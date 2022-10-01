@@ -75,8 +75,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItem(Long itemId, Long userId) {
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Item not found in base."));
+        Item item = commonService.getInDbItem(itemId);
         return convertItem(item, userId);
     }
 

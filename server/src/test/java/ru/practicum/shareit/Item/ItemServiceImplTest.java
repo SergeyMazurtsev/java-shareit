@@ -167,8 +167,8 @@ public class ItemServiceImplTest {
 
     @Test
     void getItem() {
-        when(itemRepository.findById(anyLong()))
-                .thenReturn(Optional.ofNullable(item));
+        when(commonService.getInDbItem(anyLong()))
+                .thenReturn(item);
 
         ItemDto testItemDto = itemService.getItem(1L, user.getId());
         assertThat(testItemDto.getId(), equalTo(itemDto.getId()));
@@ -180,8 +180,8 @@ public class ItemServiceImplTest {
         assertThat(testItemDto.getLastBooking(), equalTo(itemDto.getLastBooking()));
         assertThat(testItemDto.getNextBooking(), equalTo(itemDto.getNextBooking()));
 
-        verify(itemRepository, times(1))
-                .findById(anyLong());
+        verify(commonService, times(1))
+                .getInDbItem(anyLong());
     }
 
     @Test
