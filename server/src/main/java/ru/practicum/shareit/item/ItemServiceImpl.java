@@ -83,7 +83,8 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> getItemsOfUser(Long userId, Integer from, Integer size) {
         User user = commonService.getInDBUser(userId);
         return itemRepository.findAllByOwner(user, commonService.getPagination(from, size, null))
-                .stream().map(i -> convertItem(i, userId)).collect(Collectors.toList());
+                .stream().map(i -> convertItem(i, userId)).sorted(Comparator.comparing(ItemDto::getId))
+                .collect(Collectors.toList());
     }
 
     @Override
