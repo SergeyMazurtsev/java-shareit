@@ -23,14 +23,14 @@ public class ItemContoller {
 
     @PostMapping
     public ResponseEntity<Object> createItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                                             @RequestBody @Valid ItemDto itemDto) {
+                                             @Valid @RequestBody ItemDto itemDto) {
         log.info("Create item={}, of user={}", itemDto, userId);
         return itemClient.createItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<Object> patchItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                                            @RequestBody @Valid ItemDto itemDto,
+                                            @Valid @RequestBody ItemDto itemDto,
                                             @PathVariable Long itemId) {
         log.info("Patch itemId={}, {}, of user={}", itemId, itemDto, userId);
         return itemClient.patchItem(userId, itemId, itemDto);
@@ -67,7 +67,7 @@ public class ItemContoller {
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<Object> addCommentToItem(@PathVariable Long itemId,
                                                    @RequestHeader("X-Sharer-User-Id") Long userId,
-                                                   @RequestBody @Valid CommentDto commentDto) {
+                                                   @Valid @RequestBody CommentDto commentDto) {
         return itemClient.addCommentToItem(userId, itemId, commentDto);
     }
 }

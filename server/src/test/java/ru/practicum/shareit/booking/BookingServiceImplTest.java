@@ -66,6 +66,7 @@ public class BookingServiceImplTest {
                 .id(item.getId())
                 .name(item.getName())
                 .available(item.getAvailable())
+                .owner(userDto)
                 .build();
         booking = Booking.builder()
                 .id(1L)

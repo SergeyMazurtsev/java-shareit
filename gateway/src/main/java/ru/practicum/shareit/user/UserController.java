@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createUser(@RequestBody @Valid UserDto userDto) {
+    public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto userDto) {
         log.info("Create user {}", userDto);
         return userClient.createUser(userDto);
     }
@@ -32,7 +32,7 @@ public class UserController {
     @PatchMapping("/{userId}")
     public ResponseEntity<Object> patchUser(
             @PathVariable Long userId,
-            @RequestBody @Valid UserDto userDto) {
+            @Valid @RequestBody UserDto userDto) {
         log.info("Patching userId={} user {}", userId, userDto);
         return userClient.patchUser(userId, userDto);
     }

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.user.UserMapper;
 
 import java.util.stream.Collectors;
 
@@ -29,6 +30,7 @@ public class ItemMapper {
                 .requestId((item.getRequest() != null) ? item.getRequest().getId() : null)
                 .comments((item.getComments() != null) ? item.getComments().stream().map(CommentMapper::toCommentDto)
                         .collect(Collectors.toSet()) : null)
+                .owner((item.getOwner() != null) ? UserMapper.toUserDto(item.getOwner()) : null)
                 .build();
     }
 
