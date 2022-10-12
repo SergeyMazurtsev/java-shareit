@@ -41,7 +41,7 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidatorException("Bad request. Start is after end or start is before now or end is before now.");
         }
         Long checkOwnerId = booking.getItem().getOwner().getId();
-        if (checkOwnerId == userId) {
+        if (checkOwnerId.equals(userId)) {
             throw new NotFoundException("Bad request. User id with id of owner is not equal.");
         }
         try {
@@ -57,7 +57,7 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new NotFoundException("Not found. Booking not found in base."));
         Long owner = booking.getItem().getOwner().getId();
         Long checkUserId = commonService.getInDBUser(userId).getId();
-        if (checkUserId != owner) {
+        if (!checkUserId.equals(owner)) {
             throw new NotFoundException("Not found. User id with id of owner is not equal.");
         }
         if (!booking.getItem().getAvailable()) {
@@ -80,9 +80,9 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new NotFoundException("Not found. Booking not found in base."));
         Long owner = booking.getItem().getOwner().getId();
         Long checkUserId = commonService.getInDBUser(userId).getId();
-        if (checkUserId != owner) {
+        if (!checkUserId.equals(owner)) {
             Long checkBookerId = booking.getBooker().getId();
-            if (checkBookerId != userId) {
+            if (!checkBookerId.equals(userId)) {
                 throw new NotFoundException("Not found. User id is not equal with owner item or booker id.");
             }
         }
@@ -131,7 +131,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoOut> getBookingItemsByStatus(Long userId, BookingState approved, Integer from, Integer size) {
-        User user = commonService.getInDBUser(userId);
+        commonService.getInDBUser(userId);
         List<BookingDtoOut> searchBookings = bookingRepository.findAllBookingOfUserInItem(
                         userId, commonService.getPagination(from, size, null)).stream()
                 .map(BookingMapper::toBookingDtoOut).collect(Collectors.toList());

@@ -53,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto patchItem(ItemDto itemDto, Long itemId, Long userId) {
         Item item = commonService.getInDbItem(itemId);
         Long checkId = item.getOwner().getId();
-        if (checkId != userId) {
+        if (!checkId.equals(userId)) {
             throw new NotFoundException("User id and owner of item id is not equal.");
         }
         ItemMapper.patchItem(itemDto, item);
@@ -139,13 +139,13 @@ public class ItemServiceImpl implements ItemService {
                     .findFirst().orElse(null);
             if (last != null) {
                 Long checkLast = last.getItem().getOwner().getId();
-                if (checkLast != userId) {
+                if (!checkLast.equals(userId)) {
                     last = null;
                 }
             }
             if (next != null) {
                 Long checkNext = next.getItem().getOwner().getId();
-                if (checkNext != userId) {
+                if (!checkNext.equals(userId)) {
                     next = null;
                 }
             }
